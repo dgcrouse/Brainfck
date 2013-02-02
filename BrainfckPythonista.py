@@ -1,9 +1,3 @@
-def decode(inByte):
-    if inByte < 10:
-        return str(inByte)
-    else:
-        return chr(inByte)
-
 import sys, clipboard, console
 
 brainfck = clipboard.get()
@@ -30,9 +24,16 @@ for char in brainfck:
         bracketstack.append(idx)
         # For close bracket, pop stack and add indices to lists
     if char == ']':
-        inbrackets.append(bracketstack.pop())
+        try:
+            inbrackets.append(bracketstack.pop())
+        except:
+            print('Error! Unmatched ] exists')
+            sys.exit()
         outbrackets.append(idx)
     idx+=1
+if len(bracketstack) > 0:
+    print('Error! Unmatched [ exists')
+    sys.exit()
 
 
 # Do we need input?
@@ -44,9 +45,9 @@ while currchar < len(brainfck):
     if brainfck[currchar] == '>':
         currbyte+=1
         
-    # If we run off the end, then we add another kB
-    if currbyte == len(myBytes):
-        myBytes += bytearray(1000)
+        # If we run off the end, then we add another kB
+        if currbyte == len(myBytes):
+            myBytes += bytearray(1000)
         
     elif brainfck[currchar] == '<':
         currbyte-=1
@@ -66,7 +67,7 @@ while currchar < len(brainfck):
             myBytes[currbyte]-=1;
             
     elif brainfck[currchar] == '.':
-        sys.stdout.write(decode(myBytes[currbyte]))
+        sys.stdout.write(chr(myBytes[currbyte]))
         
     elif brainfck[currchar] == ',':
         if currin == len(instr):
